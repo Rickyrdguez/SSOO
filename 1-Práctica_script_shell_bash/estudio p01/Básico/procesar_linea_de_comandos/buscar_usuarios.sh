@@ -92,3 +92,13 @@ fi
 
 # --- FUNCIONAMIENTO DEL PROGRAMA ---
 
+{
+  echo "USUARIO UID SHELL"
+
+  if [[ $ORDENAR -eq 1 ]]; then
+    cut -d: -f1,3,7 /etc/passwd | tr ':' ' ' | sort -k2 -n -r
+  else
+    cut -d: -f1,3,7 /etc/passwd | tr ':' ' ' | sort
+
+  fi
+} | column -t

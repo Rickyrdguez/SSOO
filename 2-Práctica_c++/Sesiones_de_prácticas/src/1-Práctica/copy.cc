@@ -67,6 +67,53 @@ constexpr size_t kBufferSize = 128 * 1024;
     }
 }
 
+// Modificación de la sesión 
+
+/**
+ * @brief Abre el archivo de registro en modo añadir: primero en /tmp y, solo si
+ * falla, en el directorio HOME
+ */
+[[nodiscard]] std::expected<int, std::system_error> open_logfile() {
+    constexpr int kFlags = O_WRONLY | O_CREAT | O_APPEND;
+    int fd = open("/tmp/copy_logfile", kFlags, 0644);
+    if (fd != -1) {
+        return fd;
+    }
+    const char* home = std::getenv("HOME");
+    if (home != nullptr) {
+        std::string path = std::string{home} + "/copy_logfile";
+        fd = open(path.c_str(), kFlags, 0644);
+        if (fd != -1) {
+            return fd;
+        }
+    }
+    return system_error_from_errno("error al abrir el archivo de registro");
+}
+
+/**
+ * @brief Añade al registro una línea con el archivo copiado y su tamaño
+ *
+ * @param src_path Ruta del archivo de origen
+ * @param dest_path Ruta del archivo de destino (ya copiado)
+ */
+[[nodiscard]] std::expected<void, std::system_error> log_copy(
+    const std::string& src_path, const std::string& dest_path) {
+    struct stat st;
+    if (stat(dest_path.c_str(), &st) == -1) {
+        return system_error_from_errno(
+            "error al consultar el tamaño del archivo de destino");
+    }
+    auto log_fd = open_logfile();
+    if (!log_fd) {
+        return std::unexpected(log_fd.error());
+    }
+    std::string line = src_path + " -> " + dest_path + " (" +
+                       std::to_string(st.st_size) + " bytes)\n";
+    auto result = write_all(*log_fd, line.data(), line.size());
+    close(*log_fd);
+    return result;
+}
+
 }  // namespace
 
 /**
@@ -156,8 +203,12 @@ std::expected<void, std::system_error> copy_file(const std::string& src_path,
 
     auto result = copy_data(src_fd, dest_fd);
     close(src_fd);
+
     if (close(dest_fd) == -1 && result) {
         return system_error_from_errno("error al cerrar el archivo de destino");
     }
-    return result;
+    if (!result) {
+        return result;
+    }
+    return log_copy(src_path, dest_path);
 }

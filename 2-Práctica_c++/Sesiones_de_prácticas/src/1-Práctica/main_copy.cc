@@ -9,6 +9,9 @@
  * Fecha: 15/11/2026
  */
 
+ // Para compilar use make y para comprobar lo hecho en la sesión de evaluación
+ // use: ./copy pequeno.txt p2.txt && cat /tmp/copy_logfile 
+
 
 // Archivo que contiene el main del programa copy
 

@@ -42,6 +42,14 @@ bool is_directory(const std::string& path);
 bool is_same_file(const std::string& src_path, const std::string& dest_path);
 
 // Copia el contenido de ORIGEN en DESTINO
+// Lo modifico según la sesión de evaluación
+
+/**
+* el programa tiene que llevar un registro de los ficheros que ha copiado y su 
+* tamaño. Este registro estará en el /tmp/copy_logfile ( o en el directorio 
+* HOME/copy_logfile solo por si da error)
+*/
+
 [[nodiscard]] std::expected<void, std::system_error> copy_file(
     const std::string& src_path, const std::string& dest_path,
     mode_t dst_perms = 0644);

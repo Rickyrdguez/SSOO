@@ -1,0 +1,25 @@
+# Ejecutables y archivos de compilación (C++)
+copy
+*.o
+*.out
+*.exe
+a.out
+core
+
+# Archivos de prueba de la práctica
+*.dat
+testfile*
+v2.txt
+p2.txt
+vacio.txt
+pequeno.txt
+salida.txt
+destino.txt
+carpeta/
+
+# Editor y sistema
+.vscode/
+*.swp
+*~
+.DS_Store
+Thumbs.db

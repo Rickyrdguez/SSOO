@@ -18,7 +18,7 @@
 #include <sys/stat.h>  // stat(), S_ISDIR(), struct stat, mode_t
 #include <unistd.h>    // read(), write(), close()
 
-#include <array>         // std::array
+#include <array>   
 #include <cerrno>        // errno, EINTR
 #include <cstdlib>       // EXIT_SUCCESS, EXIT_FAILURE
 #include <exception>     // std::exception
